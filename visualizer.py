@@ -270,3 +270,122 @@ class TreeVisualizer:
 
         # Guardar html
         fig.write_html("images/final_state.html")
+
+    def final_ff_route(self, root, tree, ff_initial, ff_positions, protected_nodes, label):
+        # Grafica la ruta final del bombero
+        fig = go.Figure()
+
+        # Nodos del árbol
+        fig.add_trace(go.Scatter3d(
+            x=tree.nodes_positions[:, 0],
+            y=tree.nodes_positions[:, 1],
+            z=tree.nodes_positions[:, 2],
+            mode='markers+text',
+            text=[str(i) for i in range(tree.nodes_positions.shape[0])],
+            textposition='top center',
+            marker=dict(size=8, color="#aa6760"),
+            name='Vértices quemados'
+        ))
+
+        # Agregar aristas entre nodos
+        for i in range(tree.edges.shape[0]):
+            for j in range(tree.edges.shape[1]):
+                if tree.edges[i, j] == 1:
+                    fig.add_trace(go.Scatter3d(
+                    x=[tree.nodes_positions[i, 0], tree.nodes_positions[j, 0]],
+                    y=[tree.nodes_positions[i, 1], tree.nodes_positions[j, 1]],
+                    z=[tree.nodes_positions[i, 2], tree.nodes_positions[j, 2]],
+                    mode='lines',
+                    line=dict(color='gray', width=4),
+                    showlegend=False
+                    ))
+
+        # Root
+        fig.add_trace(go.Scatter3d(
+            x=[tree.nodes_positions[root, 0]],
+            y=[tree.nodes_positions[root, 1]],
+            z=[tree.nodes_positions[root, 2]],
+            mode='markers',
+            marker=dict(size=9, color='red'),
+            name='Root'
+        ))
+
+        # Protected nodes
+        if protected_nodes:
+            fig.add_trace(go.Scatter3d(
+                x=[tree.nodes_positions[node, 0] for node in protected_nodes],
+                y=[tree.nodes_positions[node, 1] for node in protected_nodes],
+                z=[tree.nodes_positions[node, 2] for node in protected_nodes],
+                mode='markers',
+                marker=dict(size=8, color="#7fb5e8"),
+                name='Vértices protegidos'
+            ))
+
+        # Ruta del bombero
+        # Posición inicial de otro color
+        fig.add_trace(go.Scatter3d(
+            x=[ff_initial[0]],
+            y=[ff_initial[1]],
+            z=[ff_initial[2]],
+            mode='markers',
+            marker=dict(size=9, color='green'),
+            name='Firefighter Initial Position'
+        ))
+
+        # Crea una linea que conecta los nodos en ff_positions
+        if ff_positions:
+            fig.add_trace(go.Scatter3d(
+                x=[tree.nodes_positions[pos, 0] for pos in ff_positions],
+                y=[tree.nodes_positions[pos, 1] for pos in ff_positions],
+                z=[tree.nodes_positions[pos, 2] for pos in ff_positions],
+                mode='lines+markers',
+                line=dict(color='orange', width=5),
+                marker=dict(size=8, color='blue'),
+                name=label
+            ))
+
+        # Agrega linea de la posición inicial a la primera posición en ff_positions
+        if ff_positions:
+            fig.add_trace(go.Scatter3d(
+                x=[ff_initial[0], tree.nodes_positions[ff_positions[0], 0]],
+                y=[ff_initial[1], tree.nodes_positions[ff_positions[0], 1]],
+                z=[ff_initial[2], tree.nodes_positions[ff_positions[0], 2]],
+                mode='lines',
+                line=dict(color='orange', width=5),
+                showlegend=False
+            ))
+
+        # update layout
+        fig.update_layout(scene=dict(
+            camera=dict(
+                eye=dict(x=0.5, y=1.5, z=0.5),
+                ),
+                            xaxis=dict(title='x', range=[-1, 1], 
+                                        backgroundcolor='white',
+                                        gridcolor='lightgray',  
+                                        zerolinecolor='lightgray',
+                                        showbackground=True,
+                                        showticklabels=False),
+                            yaxis=dict(title='y', range=[-1, 1], 
+                                    backgroundcolor='white',
+                                    gridcolor='lightgray',  
+                                    zerolinecolor='lightgray',
+                                    showbackground=True,
+                                    showticklabels=False),
+                            zaxis=dict(title='z', range=[-1, 1], 
+                                    backgroundcolor='white',
+                                    gridcolor='lightgray',  
+                                    zerolinecolor='lightgray',
+                                    showbackground=True,
+                                    showticklabels=False)),
+                width=1000, height=1000,
+                paper_bgcolor='white',
+                legend=dict(
+                    font=dict(
+                        size=20,  # <--- Aquí cambias el tamaño de la letra
+                        color="black"
+                    )
+                ))
+
+        # Guardar la imagen
+        fig.write_image("route" + label + ".png")
