@@ -43,7 +43,7 @@ def calculate_protected_nodes(tree, ff_route):
     return protected_nodes
 
 
-experiment_file = "results/rollout_test_results_2_nodes.json"
+experiment_file = "results/rollout_parallel_test_results_1_nodes.json"
 positions_file = "experiments/experiments_moving_nodes.json"
 id = 56
 
@@ -78,6 +78,6 @@ protected_nodes_rollout = calculate_protected_nodes(tree, ff_route) - set(ff_rou
 protected_nodes_greedy = calculate_protected_nodes(tree, greedy_route) - set(greedy_route)
 protected_nodes_ilp = calculate_protected_nodes(tree, ilp_route) - set(ilp_route)
 
-visualizer.final_ff_route(root, tree, ff_initial_position, ff_route, protected_nodes_rollout, "rollout2")
-visualizer.final_ff_route(root, tree, ff_initial_position, greedy_route, protected_nodes_greedy, "greedy")
-visualizer.final_ff_route(root, tree, ff_initial_position, ilp_route, protected_nodes_ilp,"ilp")
+visualizer.final_ff_route(root, tree, ff_initial_position, ff_route, protected_nodes_rollout, "Rollout")
+visualizer.final_ff_route(root, tree, ff_initial_position, greedy_route, protected_nodes_greedy, "Greedy")
+visualizer.final_ff_route(root, tree, ff_initial_position, ilp_route, protected_nodes_ilp,"ILP")
