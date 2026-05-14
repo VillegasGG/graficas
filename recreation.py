@@ -45,7 +45,7 @@ def calculate_protected_nodes(tree, ff_route):
 
 experiment_file = "results/rollout_parallel_test_results_1_nodes.json"
 positions_file = "experiments/experiments_moving_nodes.json"
-id = 56
+id = 10
 
 experiment = load_experiment(experiment_file, id)
 experiment_data = load_data(positions_file, id)
